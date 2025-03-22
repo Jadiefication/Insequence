@@ -1,10 +1,11 @@
 package io.insequence.renderer
 
 import io.insequence.exception.ExceptionHandler
+import io.insequence.renderer.exception.GLFWInitializeException
 import io.insequence.renderer.exception.WindowCreationException
 import org.lwjgl.PointerBuffer
-import org.lwjgl.glfw.GLFW
-import org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor
+import org.lwjgl.glfw.GLFW.*
+import org.lwjgl.glfw.GLFWVulkan.glfwGetRequiredInstanceExtensions
 import org.lwjgl.system.MemoryStack
 import org.lwjgl.system.MemoryUtil.NULL
 import org.lwjgl.vulkan.*
@@ -20,6 +21,12 @@ class Renderer {
     var window by Delegates.notNull<Long>()
 
     fun openWindow(windowStats: Window) {
+        if (!glfwInit()) {
+            throw GLFWInitializeException()
+        }
+        glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API)
+        glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE)
+
         MemoryStack.stackPush().use {
             val info: VkApplicationInfo = VkApplicationInfo.calloc(it).apply {
                 sType(VK_STRUCTURE_TYPE_APPLICATION_INFO)
@@ -31,6 +38,7 @@ class Renderer {
             val createInfo = VkInstanceCreateInfo.calloc(it).apply {
                 sType(VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO)
                 pApplicationInfo(info)
+                ppEnabledLayerNames(glfwGetRequiredInstanceExtensions())
             }
 
             val pInstance = it.mallocPointer(1)
@@ -45,9 +53,17 @@ class Renderer {
             val vkInstance = VkInstance(instance, createInfo)
 
             println("Vulkan Instance Created Successfully: $instance")
-
-            // Destroy instance at the end
-            vkDestroyInstance(vkInstance, null)
         }
+
+        window = glfwCreateWindow(windowStats.width, windowStats.height, windowStats.name, NULL, NULL)
+    }
+
+    fun mainLoop(function: () -> Unit) {
+        while (!glfwWindowShouldClose(window)) {
+            glfwPollEvents()
+            function()
+        }
+        glfwDestroyWindow(window)
+        glfwTerminate()
     }
 }
