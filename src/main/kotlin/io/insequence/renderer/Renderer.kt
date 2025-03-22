@@ -5,6 +5,7 @@ import io.insequence.renderer.exception.GLFWInitializeException
 import io.insequence.renderer.exception.WindowCreationException
 import org.lwjgl.PointerBuffer
 import org.lwjgl.glfw.GLFW.*
+import org.lwjgl.glfw.GLFWVulkan.Functions.VulkanSupported
 import org.lwjgl.glfw.GLFWVulkan.glfwGetRequiredInstanceExtensions
 import org.lwjgl.system.MemoryStack
 import org.lwjgl.system.MemoryUtil.NULL
@@ -38,13 +39,12 @@ class Renderer {
             val createInfo = VkInstanceCreateInfo.calloc(it).apply {
                 sType(VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO)
                 pApplicationInfo(info)
-                ppEnabledLayerNames(glfwGetRequiredInstanceExtensions())
+                ppEnabledExtensionNames(glfwGetRequiredInstanceExtensions())
             }
 
             val pInstance = it.mallocPointer(1)
 
-            val result = vkCreateInstance(createInfo, null, pInstance)
-            if (result != VK_SUCCESS) {
+            if (vkCreateInstance(createInfo, null, pInstance) != VK_SUCCESS) {
                 throw WindowCreationException(window = windowStats)
             }
 
