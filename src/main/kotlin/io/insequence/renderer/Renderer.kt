@@ -12,9 +12,11 @@ import org.lwjgl.glfw.GLFW.glfwMakeContextCurrent
 import org.lwjgl.glfw.GLFW.glfwPlatformSupported
 import org.lwjgl.glfw.GLFW.glfwPollEvents
 import org.lwjgl.glfw.GLFW.glfwShowWindow
+import org.lwjgl.glfw.GLFW.glfwSwapBuffers
 import org.lwjgl.glfw.GLFW.glfwSwapInterval
 import org.lwjgl.glfw.GLFW.glfwTerminate
 import org.lwjgl.glfw.GLFW.glfwWindowShouldClose
+import org.lwjgl.opengl.GL.createCapabilities
 import org.lwjgl.system.MemoryStack
 import org.lwjgl.system.MemoryUtil.NULL
 import kotlin.properties.Delegates
@@ -41,6 +43,7 @@ class Renderer {
         }
 
         glfwMakeContextCurrent(window)
+        createCapabilities()
         glfwSwapInterval(1)
         glfwShowWindow(window)
     }
@@ -49,6 +52,7 @@ class Renderer {
         while (!glfwWindowShouldClose(window)) {
             glfwPollEvents()
             function()
+            glfwSwapBuffers(window)
         }
         glfwDestroyWindow(window)
         glfwTerminate()
