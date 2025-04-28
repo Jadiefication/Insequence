@@ -102,11 +102,11 @@
         </dependency>
         <dependency>
             <groupId>org.lwjgl</groupId>
-            <artifactId>lwjgl-stb</artifactId>
+            <artifactId>lwjgl-opengl</artifactId>
         </dependency>
         <dependency>
             <groupId>org.lwjgl</groupId>
-            <artifactId>lwjgl-vulkan</artifactId>
+            <artifactId>lwjgl-stb</artifactId>
         </dependency>
         <dependency>
             <groupId>org.lwjgl</groupId>
@@ -126,6 +126,11 @@
         <dependency>
             <groupId>org.lwjgl</groupId>
             <artifactId>lwjgl-openal</artifactId>
+            <classifier>${lwjgl.natives}</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.lwjgl</groupId>
+            <artifactId>lwjgl-opengl</artifactId>
             <classifier>${lwjgl.natives}</classifier>
         </dependency>
         <dependency>
